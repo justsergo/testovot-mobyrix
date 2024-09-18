@@ -7,6 +7,7 @@ import IconButton from "@/shared/ui/iconButton";
 import Button from "@/shared/ui/button";
 import Image from "next/image";
 import swapSvg from '../../../assets/swap.svg'
+import Card from "@/shared/ui/card";
 
 const Converter = (props: ConverterProps) => {
   const [options, setOptions] = useState<DropdownOption[]>([]);
@@ -23,6 +24,10 @@ const Converter = (props: ConverterProps) => {
     setOptions(dropdownOptions);    
   }, [props.data]);
 
+  useEffect(() => {
+    setConvertedRes(null)
+  }, [fromCryptoCurrency, toCryptoCurrency]);
+
   const convertCurrency = async () => {
     if (!amount) {
       setConvertedRes(null);
@@ -31,6 +36,11 @@ const Converter = (props: ConverterProps) => {
 
     const fromCoin = props?.data?.coins[fromCryptoCurrency];
     const toCoin = props?.data?.coins[toCryptoCurrency];
+    if (!fromCoin || !toCoin) {
+      setConvertedRes('Ошибка загрузки данных, попробуйте позже');
+      return;
+    }
+
     const firstSelRate = fromCoin.value;
     const secondSelRate = toCoin.value;
     const resultVal = (amount * secondSelRate) / firstSelRate;
@@ -43,7 +53,7 @@ const Converter = (props: ConverterProps) => {
   };
 
   return (
-    <div className="max-w-xl mx-auto my-10 p-5 bg-white rounded-lg shadow-md">
+    <Card>
       <h2 className="mb-5 text-2xl font-semibold text-gray-700">
         Converter
       </h2>
@@ -90,7 +100,7 @@ const Converter = (props: ConverterProps) => {
           className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 mt-1"
         />
       </div>
-      <div className="flex mt-4 min-h-4">
+      <div className="flex mt-4 h-4">
         {convertedRes && (
             <span className="font-bold">
               Converted: {convertedRes}
@@ -104,7 +114,7 @@ const Converter = (props: ConverterProps) => {
           Convert
         </Button>
       </div>
-    </div>
+    </Card>
   )
 }
 

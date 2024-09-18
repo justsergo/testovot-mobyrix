@@ -1,10 +1,22 @@
 import { Metadata } from "next";
 import Converter from "@/features/converter/ui/converter";
 import { IConverterData } from "@/features/converter/model/types";
+import Plug from "@/features/plug/ui/plug";
 
 export const metadata: Metadata = {
   title: "Cryptocurrency converter",
   description: "Test task for Mobyrix",
+};
+
+type ExchangeRates = {
+  rates: {
+    [coinName: string]: {
+      name: string,
+      unit: string,
+      value: number,
+      type: string
+    },
+  }
 };
 
 export default async function Home() {
@@ -15,8 +27,9 @@ export default async function Home() {
         headers: {
             'Accept': 'application/json'
         },
+        cache: 'no-store'
     });
-    const dataJson = await res.json();
+    const dataJson: ExchangeRates = await res.json();
     data = {
       coins: dataJson.rates,
     }
@@ -28,7 +41,7 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col  p-8">
       <h1 className="text-3xl mb-2">Cryptocurrency converter</h1>
-      <Converter data={data} />
+      {data ? <Converter data={data} /> : <Plug/>}      
     </main>
   );
 }
